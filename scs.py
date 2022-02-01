@@ -27,7 +27,6 @@ class CosSim2d(nn.Module):
         self.eps = eps
         self.padding = padding
 
-        # if not depthwise_sep: second_dim *= self.in_channels
         w = torch.empty(out_channels, in_channels, kernel_size, kernel_size)
         nn.init.xavier_normal_(w)
         self.w = nn.Parameter(w.view(out_channels, in_channels, -1), requires_grad=True)

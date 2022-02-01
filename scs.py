@@ -17,7 +17,7 @@ def unfold2d(x, kernel_size, stride, padding):
 
 class CosSim2d(nn.Module):
     def __init__(self, in_channels=1, out_channels=1, kernel_size=1, stride=1,
-        padding=0, eps=1e-12):
+        padding=0, eps=1e-12, bias=True):
         super(CosSim2d, self).__init__()
         
         self.in_channels = in_channels
@@ -33,7 +33,11 @@ class CosSim2d(nn.Module):
         
         self.p = nn.Parameter(torch.empty(out_channels))
         nn.init.constant_(self.p, 2)
-        
+        if bias:
+            self.bias = nn.Parameter(torch.empty(out_channels))
+            nn.init.constant_(self.bias, 0)
+        else:
+            self.bias = None
     
     def sigplus(self, x):
         return nn.Sigmoid()(x) * nn.Softplus()(x)
@@ -49,9 +53,12 @@ class CosSim2d(nn.Module):
         sign = torch.sign(x)
 
         x = torch.abs(x) + self.eps
-        x = x.pow(self.p.view(1, -1, 1, 1))
+        x = x.pow(self.sigplus(self.p).view(1, -1, 1, 1))
         # pdb.set_trace()
         x = sign * x
+
+        if self.bias is not None:
+            x = x + self.bias.view(1, -1, 1, 1)
         return x
 
 if __name__ == '__main__':

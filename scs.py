@@ -37,19 +37,6 @@ class CosSim2d(nn.Module):
     
     def sigplus(self, x):
         return nn.Sigmoid()(x) * nn.Softplus()(x)
-    
-    def call_body(self, x):
-        x = self.stack(x)
-        x = x.reshape(-1, self.out_x * self.out_y, self.in_channels * (self.kernel_size ** 2))
-        x_norm = self.l2_normal(x, axis=2, epsilon=self.eps)
-        w_norm = self.l2_normal(self.w, axis=1, epsilon=self.eps)
-        x = torch.matmul(x / x_norm, self.w / w_norm)
-        sign = torch.sign(x)
-        x = torch.abs(x) + self.eps
-        x = torch.pow(x, self.sigplus(self.p))
-        x = sign * x
-        x = x.reshape((-1, self.out_y, self.out_x, self.units))
-        return x
         
     def forward(self, x):
         x = unfold2d(x, kernel_size=self.kernel_size, stride=self.stride, padding=self.padding) # nchwkk

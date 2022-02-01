@@ -1,6 +1,6 @@
 # scs_pytorch
 
-Pytorch implementation of the Sharpened Cosine Similarity layer mentioned in a [tweet](https://twitter.com/_brohrer_/status/1487928061240946688).
+Pytorch implementation of the Sharpened Cosine Similarity layer mentioned in this [tweet](https://twitter.com/_brohrer_/status/1487928061240946688).
 
 The current version supports square kernels with arbitrary kernel sizes. 
 
